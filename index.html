@@ -16,7 +16,7 @@
   --sea:#174c59;
   --brown:#6b4b31;
   --darkgreen:#27483f;
-  --map-h:520px;
+  --map-h:570px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
@@ -43,7 +43,7 @@ html,body{
 .map-sub{
   position:absolute;right:10px;bottom:10px;z-index:500;
   background:rgba(24,52,78,.9);color:#fff;border-radius:999px;padding:7px 11px;
-  font-size:12px;font-weight:800;box-shadow:0 2px 10px rgba(0,0,0,.14);pointer-events:none;
+  font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.14);pointer-events:none;
 }
 .leaflet-container{cursor:default!important;font-family:inherit}
 .leaflet-control-attribution{font-size:10px}
@@ -53,9 +53,9 @@ html,body{
   box-shadow:none;
   border-radius:0;
   padding:0;
-  font-size:13.5px;
+  font-size:14px;
   line-height:1;
-  font-weight:900;
+  font-weight:800;
   color:#111;
   white-space:nowrap;
   cursor:pointer;
@@ -64,23 +64,26 @@ html,body{
     -1px -1px 0 rgba(255,255,255,.95),
      1px -1px 0 rgba(255,255,255,.95),
     -1px  1px 0 rgba(255,255,255,.95),
-     1px  1px 0 rgba(255,255,255,.95),
-     0 2px 4px rgba(255,255,255,.9);
+     1px  1px 0 rgba(255,255,255,.95);
 }
 .leaflet-tooltip.place-tip::before{display:none}
+.leaflet-tooltip.place-tip .tip-num{text-shadow:none !important;font-weight:500 !important;}
 .tip-num{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:20px;
-  height:20px;
+  width:22px;
+  height:22px;
   border-radius:50%;
   color:#fff;
-  font-size:11.5px;
-  font-weight:800;
-  margin-right:4px;
+  font-size:12.5px;
+  font-weight:500;
+  font-family:Arial, sans-serif;
+  margin-right:5px;
   vertical-align:middle;
-  box-shadow:0 1px 3px rgba(0,0,0,.22);
+  box-shadow:none;
+  text-shadow:none !important;
+  -webkit-font-smoothing:antialiased;
 }
 .filter-bar{
   flex:0 0 auto;display:flex;gap:8px;padding:11px 12px 10px;
@@ -105,8 +108,8 @@ html,body{
 .card.active{order:-1;border-color:var(--c);box-shadow:0 6px 22px rgba(0,0,0,.14)}
 .card-main{display:flex;gap:12px;padding:15px 15px 4px}
 .num{
-  flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:13px;font-weight:800;margin-top:1px;
+  flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:800;margin-top:1px;
 }
 .name{font-size:17px;line-height:1.35;font-weight:900;color:#171717;margin-bottom:5px;word-break:keep-all}
 .desc{font-size:13.5px;color:var(--muted);line-height:1.58;word-break:keep-all}
@@ -126,30 +129,51 @@ html,body{
 @keyframes popIn{from{opacity:.2;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
 .pop{animation:popIn .22s ease both}
 @media(max-width:720px){
-  :root{--map-h:470px}
+  :root{--map-h:520px}
   .map-title{top:10px;left:10px;font-size:14px;padding:8px 12px}
   .map-sub{font-size:11.5px;padding:6px 10px}
-  .leaflet-tooltip.place-tip{font-size:12.8px;padding:5px 10px 5px 6px}
+  .leaflet-tooltip.place-tip{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  border-radius:0;
+  padding:0;
+  font-size:14px;
+  line-height:1;
+  font-weight:800;
+  color:#111;
+  white-space:nowrap;
+  cursor:pointer;
+  pointer-events:all;
+  text-shadow:
+    -1px -1px 0 rgba(255,255,255,.95),
+     1px -1px 0 rgba(255,255,255,.95),
+    -1px  1px 0 rgba(255,255,255,.95),
+     1px  1px 0 rgba(255,255,255,.95);
+}
   .tip-num{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:20px;
-  height:20px;
+  width:22px;
+  height:22px;
   border-radius:50%;
   color:#fff;
-  font-size:11.5px;
-  font-weight:800;
-  margin-right:4px;
+  font-size:12.5px;
+  font-weight:500;
+  font-family:Arial, sans-serif;
+  margin-right:5px;
   vertical-align:middle;
-  box-shadow:0 1px 3px rgba(0,0,0,.22);
+  box-shadow:none;
+  text-shadow:none !important;
+  -webkit-font-smoothing:antialiased;
 }
   .filter{font-size:14px;min-height:42px;padding:10px 14px}
   .name{font-size:16px}.desc{font-size:13px}.meta{font-size:12.8px}
   .btn{font-size:14.5px;min-height:44px;padding:10px 14px}
   .btns{padding:10px 15px 15px 15px}
 }
-@media(max-height:620px){:root{--map-h:420px}}
+@media(max-height:620px){:root{--map-h:460px}}
 </style>
 </head>
 <body>
@@ -218,7 +242,7 @@ function renderMarkers(){
   }
   list.forEach(p=>{
     const on = p.id === selectedId;
-    const icon = L.divIcon({className:'',html:`<div style="width:${on?14:11}px;height:${on?14:11}px;border-radius:50%;background:${p.color};border:1px solid rgba(0,0,0,.18);box-shadow:0 1px 4px rgba(0,0,0,.28);"></div>`,iconSize:[24,24],iconAnchor:[12,12]});
+    const icon = L.divIcon({className:'',html:`<div style="width:${on?10:8}px;height:${on?10:8}px;border-radius:50%;background:${p.color};border:0;box-shadow:none;"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
     const marker = L.marker([p.showLat,p.showLng],{icon,keyboard:false,zIndexOffset:on?1000:p.id*10}).addTo(markerLayer);
     marker.bindTooltip(`<span class="tip-num" style="background:${p.color};">${p.id}</span>${p.short}`,{permanent:true,direction:p.dir,offset:p.off,className:'place-tip'});
     marker.openTooltip();
@@ -232,7 +256,7 @@ function fitMap(){
   setTimeout(()=>{
     map.invalidateSize(false);
     const bounds = L.latLngBounds(list.map(p=>[p.showLat,p.showLng]));
-    map.fitBounds(bounds,{paddingTopLeft:[92,90],paddingBottomRight:[92,90],maxZoom:activeCat==='전체'?11:12,animate:false});
+    map.fitBounds(bounds,{paddingTopLeft:[52,48],paddingBottomRight:[52,48],maxZoom:activeCat==='전체'?12:13,animate:false});
   },80);
   setTimeout(()=>map.invalidateSize(false),280);
 }
