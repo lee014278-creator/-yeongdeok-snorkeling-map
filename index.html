@@ -3,20 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>영덕 스노쿨링 명소 13곳 지도</title>
+<title>영덕 스노쿨링 명소 15곳 지도</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <style>
 :root{
   --bg:#f3f0e9;
-  --card:#fff;
+  --card:#ffffff;
   --text:#171717;
-  --muted:#60646b;
+  --muted:#5d636b;
   --line:#e5d9c8;
-  --navy:#18344e;
-  --sea:#174c59;
-  --brown:#6b4b31;
-  --darkgreen:#27483f;
-  --map-h:570px;
+  --map-h:360px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
@@ -25,264 +21,401 @@ html,body{
   background:var(--bg);color:var(--text);
 }
 .wrap{
-  width:100%;max-width:820px;height:100vh;margin:0 auto;
+  width:100%;max-width:760px;height:100vh;margin:0 auto;
   display:flex;flex-direction:column;overflow:hidden;background:var(--bg);
 }
 .map-box{
-  flex:0 0 var(--map-h);height:var(--map-h);min-height:var(--map-h);
-  position:relative;overflow:hidden;background:#dce8df;border-radius:0 0 18px 18px;
+  position:relative;flex:0 0 var(--map-h);height:var(--map-h);min-height:var(--map-h);
+  overflow:hidden;border-radius:0 0 18px 18px;background:#dce8df;
   box-shadow:0 4px 16px rgba(0,0,0,.12);
 }
-#map{width:100%;height:100%;background:#dce8df}
+#map{width:100%;height:100%}
 .map-title{
-  position:absolute;top:11px;left:11px;z-index:500;
-  background:rgba(255,250,242,.96);border:1px solid rgba(24,52,78,.18);
-  border-radius:999px;padding:9px 14px;font-size:15px;font-weight:900;color:#1e2d3a;
-  box-shadow:0 2px 10px rgba(0,0,0,.12);pointer-events:none;
-}
-.map-sub{
-  position:absolute;right:10px;bottom:10px;z-index:500;
-  background:rgba(24,52,78,.9);color:#fff;border-radius:999px;padding:7px 11px;
-  font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.14);pointer-events:none;
+  position:absolute;top:11px;left:11px;z-index:900;
+  background:rgba(255,250,242,.95);border:1px solid rgba(24,52,78,.18);
+  border-radius:999px;padding:9px 14px;font-size:15px;font-weight:800;
+  color:#1e2d3a;box-shadow:0 2px 10px rgba(0,0,0,.12);pointer-events:none;
 }
 .leaflet-container{cursor:default!important;font-family:inherit}
-.leaflet-control-attribution{font-size:10px}
-.leaflet-tooltip.place-tip{
-  background:transparent;
-  border:0;
-  box-shadow:none;
-  border-radius:0;
-  padding:0;
-  font-size:14px;
-  line-height:1;
-  font-weight:800;
-  color:#111;
-  white-space:nowrap;
-  cursor:pointer;
-  pointer-events:all;
-  text-shadow:
-    -1px -1px 0 rgba(255,255,255,.95),
-     1px -1px 0 rgba(255,255,255,.95),
-    -1px  1px 0 rgba(255,255,255,.95),
-     1px  1px 0 rgba(255,255,255,.95);
+.leaflet-marker-icon{overflow:visible!important}
+.dot-pin{
+  width:12px;height:12px;border-radius:50%;background:var(--c);
+  border:2px solid rgba(255,255,255,.95);box-shadow:0 1px 4px rgba(0,0,0,.28);
 }
-.leaflet-tooltip.place-tip::before{display:none}
-.leaflet-tooltip.place-tip .tip-num{text-shadow:none !important;font-weight:500 !important;}
-.tip-num{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  color:#fff;
-  font-size:12.5px;
-  font-weight:500;
-  font-family:Arial, sans-serif;
-  margin-right:5px;
-  vertical-align:middle;
-  box-shadow:none;
-  text-shadow:none !important;
-  -webkit-font-smoothing:antialiased;
+.map-label{
+  position:absolute;z-index:850;display:flex;align-items:center;gap:6px;white-space:nowrap;
+  background:rgba(255,255,255,.94);border:2px solid var(--c);border-radius:999px;
+  padding:5px 10px 5px 6px;box-shadow:0 2px 8px rgba(0,0,0,.10);
+  font-size:12.5px;font-weight:800;color:#111;cursor:pointer;
 }
-.filter-bar{
-  flex:0 0 auto;display:flex;gap:8px;padding:11px 12px 10px;
-  overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--bg);border-bottom:1px solid var(--line);
+.map-label .badge{
+  width:21px;height:21px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--c);color:#fff;font-family:Arial,sans-serif;font-size:12px;font-weight:500;flex:0 0 auto;
 }
-.filter-bar::-webkit-scrollbar{display:none}
-.filter{
-  flex:0 0 auto;min-height:42px;padding:10px 15px;border:1px solid #d6c8b4;border-radius:999px;
-  background:#fff;color:#3f3932;font-size:14px;font-weight:900;white-space:nowrap;cursor:pointer;
-  box-shadow:0 1px 5px rgba(0,0,0,.05);
-}
-.filter.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.label-line{position:absolute;z-index:820;height:2px;transform-origin:left center;pointer-events:none;opacity:.92}
+
 .cards{
   flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:12px 12px 30px;display:flex;flex-direction:column;gap:11px;background:var(--bg);
 }
 .card{
-  flex:0 0 auto;background:var(--card);border-radius:17px;border:2.5px solid transparent;overflow:hidden;
-  box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;transition:box-shadow .22s,border-color .22s,transform .22s;
+  flex:0 0 auto;background:var(--card);border-radius:17px;border:2.5px solid transparent;
+  overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);cursor:pointer;
 }
-.card:hover{box-shadow:0 5px 18px rgba(0,0,0,.12);transform:translateY(-1px)}
 .card.active{order:-1;border-color:var(--c);box-shadow:0 6px 22px rgba(0,0,0,.14)}
-.card-main{display:flex;gap:12px;padding:15px 15px 4px}
+.card-main{display:flex;gap:12px;padding:15px}
 .num{
   flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:14px;font-weight:800;margin-top:1px;
+  color:#fff;font-family:Arial,sans-serif;font-size:14px;font-weight:500;margin-top:1px;
 }
-.name{font-size:17px;line-height:1.35;font-weight:900;color:#171717;margin-bottom:5px;word-break:keep-all}
+.card-body{flex:1;min-width:0}
+.name{font-size:17px;line-height:1.35;font-weight:800;color:#171717;margin-bottom:5px;word-break:keep-all}
 .desc{font-size:13.5px;color:var(--muted);line-height:1.58;word-break:keep-all}
-
-.btns{display:flex;gap:8px;flex-wrap:wrap;padding:10px 15px 15px 59px}
-
+.btns{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0 0 0}
 .btn{
-  min-height:44px;padding:10px 15px;border-radius:999px;font-size:15px;font-weight:900;line-height:1;
+  min-height:44px;padding:10px 15px;border-radius:999px;font-size:14.5px;font-weight:800;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;border:0;white-space:nowrap;
 }
-.btn.map{background:var(--darkgreen)}
-.btn.info{background:var(--navy)}
-.btn.beach{background:var(--sea)}
-.btn.route{background:var(--brown)}
-.btn:hover{opacity:.86}
-.nores{text-align:center;padding:28px 0;color:#777;font-size:14px;font-weight:700}
-@keyframes popIn{from{opacity:.2;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
-.pop{animation:popIn .22s ease both}
+.btn.map{background:#1f7a4d}
+.btn.info{background:#23415b}
+.btn.beach{background:#166a8a}
+.btn.route{background:#8a4f18}
+
 @media(max-width:720px){
-  :root{--map-h:520px}
-  .map-title{top:10px;left:10px;font-size:14px;padding:8px 12px}
-  .map-sub{font-size:11.5px;padding:6px 10px}
-  .leaflet-tooltip.place-tip{
-  background:transparent;
-  border:0;
-  box-shadow:none;
-  border-radius:0;
-  padding:0;
-  font-size:14px;
-  line-height:1;
-  font-weight:800;
-  color:#111;
-  white-space:nowrap;
-  cursor:pointer;
-  pointer-events:all;
-  text-shadow:
-    -1px -1px 0 rgba(255,255,255,.95),
-     1px -1px 0 rgba(255,255,255,.95),
-    -1px  1px 0 rgba(255,255,255,.95),
-     1px  1px 0 rgba(255,255,255,.95);
+  :root{--map-h:340px}
+  .wrap{max-width:100%}
+  .map-title{font-size:14px;padding:8px 12px}
+  .map-label{font-size:12px;padding:5px 9px 5px 6px}
+  .map-label .badge{width:20px;height:20px;font-size:11.5px}
+  .name{font-size:16px}
+  .desc{font-size:13px}
+  .btn{font-size:14px}
 }
-  .tip-num{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  color:#fff;
-  font-size:12.5px;
-  font-weight:500;
-  font-family:Arial, sans-serif;
-  margin-right:5px;
-  vertical-align:middle;
-  box-shadow:none;
-  text-shadow:none !important;
-  -webkit-font-smoothing:antialiased;
-}
-  .filter{font-size:14px;min-height:42px;padding:10px 14px}
-  .name{font-size:16px}.desc{font-size:13px}.meta{font-size:12.8px}
-  .btn{font-size:14.5px;min-height:44px;padding:10px 14px}
-  .btns{padding:10px 15px 15px 15px}
-}
-@media(max-height:620px){:root{--map-h:460px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="map-box">
+  <div class="map-box" id="mapBox">
     <div id="map"></div>
-    <div class="map-title">영덕 스노쿨링 명소 13곳</div>
   </div>
-  <div class="filter-bar" id="filters"></div>
-  <div class="cards" id="cards"></div>
+  <div class="cards" id="cards">
+    <article class="card active" id="card-1" data-id="1" style="--c:#e53935">
+  <div class="card-main">
+    <div class="num" style="background:#e53935">1</div>
+    <div class="card-body">
+      <div class="name">구계항 방파제</div>
+      <div class="desc">영덕 남쪽 구계항 방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/구계항%20방파제%20영덕" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-2" data-id="2" style="--c:#fb8c00">
+  <div class="card-main">
+    <div class="num" style="background:#fb8c00">2</div>
+    <div class="card-body">
+      <div class="name">하저해수욕장 위쪽</div>
+      <div class="desc">하저리해수욕장 위쪽 해안 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/하저해수욕장%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn beach" href="https://tour.yd.go.kr/mkor/sight/sightView.aspx?idx=244" target="_blank" rel="noopener">해수욕장 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-3" data-id="3" style="--c:#43a047">
+  <div class="card-main">
+    <div class="num" style="background:#43a047">3</div>
+    <div class="card-body">
+      <div class="name">대부방파제</div>
+      <div class="desc">영덕읍 대부리 쪽 방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/대부방파제%20영덕" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-4" data-id="4" style="--c:#8e24aa">
+  <div class="card-main">
+    <div class="num" style="background:#8e24aa">4</div>
+    <div class="card-body">
+      <div class="name">청소년해양센터체험관</div>
+      <div class="desc">청소년해양센터체험관 인근 해안 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/entry/place/33431861?c=15.00,0,0,2,dh&amp;placePath=/home?from=map&amp;fromPanelNum=1&amp;additionalHeight=76&amp;timestamp=202606241652&amp;locale=ko&amp;svcName=map_pcv5" target="_blank" rel="noopener">네이버 지도</a><a class="btn info" href="https://www.nymc.or.kr/" target="_blank" rel="noopener">기관 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-5" data-id="5" style="--c:#1e88e5">
+  <div class="card-main">
+    <div class="num" style="background:#1e88e5">5</div>
+    <div class="card-body">
+      <div class="name">대탄해변</div>
+      <div class="desc">대탄리 해변 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/대탄해변%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn route" href="https://ydstay.kr/theme/C/35" target="_blank" rel="noopener">블루로드 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-6" data-id="6" style="--c:#f4511e">
+  <div class="card-main">
+    <div class="num" style="background:#f4511e">6</div>
+    <div class="card-body">
+      <div class="name">대탄방파제</div>
+      <div class="desc">대탄해변 위쪽 방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/대탄방파제%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn route" href="https://ydstay.kr/theme/C/35" target="_blank" rel="noopener">블루로드 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-7" data-id="7" style="--c:#00acc1">
+  <div class="card-main">
+    <div class="num" style="background:#00acc1">7</div>
+    <div class="card-body">
+      <div class="name">오보해변</div>
+      <div class="desc">오보리 해안 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/오보해변%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn beach" href="https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=245" target="_blank" rel="noopener">해수욕장 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-8" data-id="8" style="--c:#3949ab">
+  <div class="card-main">
+    <div class="num" style="background:#3949ab">8</div>
+    <div class="card-body">
+      <div class="name">석동방파제</div>
+      <div class="desc">석리 쪽 방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/석동방파제%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn route" href="https://ydstay.kr/theme/C/35" target="_blank" rel="noopener">블루로드 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-9" data-id="9" style="--c:#6d4c41">
+  <div class="card-main">
+    <div class="num" style="background:#6d4c41">9</div>
+    <div class="card-body">
+      <div class="name">바다마루 민박</div>
+      <div class="desc">축산면 경정3길 36-1 바다마루 민박 기준 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/%EB%B0%94%EB%8B%A4%EB%A7%88%EB%A3%A8%20%EB%AF%BC%EB%B0%95%20%EC%98%81%EB%8D%95" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-10" data-id="10" style="--c:#00897b">
+  <div class="card-main">
+    <div class="num" style="background:#00897b">10</div>
+    <div class="card-body">
+      <div class="name">경정리 소방파제</div>
+      <div class="desc">경정리 105 인근 소방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/%EA%B2%BD%EC%A0%95%EB%A6%AC%20%EC%86%8C%EB%B0%A9%ED%8C%8C%EC%A0%9C" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-11" data-id="11" style="--c:#7cb342">
+  <div class="card-main">
+    <div class="num" style="background:#7cb342">11</div>
+    <div class="card-body">
+      <div class="name">경정해변</div>
+      <div class="desc">축산면 경정리 해변 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/경정해변%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn beach" href="https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=246" target="_blank" rel="noopener">해수욕장 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-12" data-id="12" style="--c:#8d6e63">
+  <div class="card-main">
+    <div class="num" style="background:#8d6e63">12</div>
+    <div class="card-body">
+      <div class="name">덕신민박 앞 소방파제</div>
+      <div class="desc">덕신민박 앞쪽 소방파제 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/덕신민박%20영덕" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-13" data-id="13" style="--c:#5e35b1">
+  <div class="card-main">
+    <div class="num" style="background:#5e35b1">13</div>
+    <div class="card-body">
+      <div class="name">축산항</div>
+      <div class="desc">경정리 위쪽으로 이어지는 축산항 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/축산항%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn info" href="https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=29e610f0-91e5-41c6-acbf-33e9e27114e9" target="_blank" rel="noopener">관광 정보</a><a class="btn beach" href="https://badaon.or.kr/seantour_map/travel/destination/detail.do?destId=FCID111740" target="_blank" rel="noopener">바다여행 정보</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-14" data-id="14" style="--c:#c0ca33">
+  <div class="card-main">
+    <div class="num" style="background:#c0ca33">14</div>
+    <div class="card-body">
+      <div class="name">영해면 사진리</div>
+      <div class="desc">영해면 사진리 해안 쪽 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/영해면%20사진리%20영덕" target="_blank" rel="noopener">네이버 지도</a></div>
+    </div>
+  </div>
+</article><article class="card" id="card-15" data-id="15" style="--c:#546e7a">
+  <div class="card-main">
+    <div class="num" style="background:#546e7a">15</div>
+    <div class="card-body">
+      <div class="name">대진스쿠버 앞</div>
+      <div class="desc">대진항·대진해수욕장 권역 스쿠버 포인트입니다.</div>
+      <div class="btns"><a class="btn map" href="https://map.naver.com/p/search/대진스쿠버%20영덕" target="_blank" rel="noopener">네이버 지도</a><a class="btn beach" href="https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=248" target="_blank" rel="noopener">대진해수욕장 정보</a></div>
+    </div>
+  </div>
+</article>
+  </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const places = [
-  {id:1,name:'구계항 방파제',short:'구계항',lat:36.408,lng:129.390,showLat:36.4020,showLng:129.3800,cat:'강구·영덕권',color:'#2f5b4a',tag:'강구 인근 · 방파제',park:'공터 이용',wc:'확인 필요',desc:'강구항에서 가까운 남쪽 포인트. 방파제 안쪽이 비교적 잔잔해 가볍게 들르기 좋습니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/구계항%20방파제%20영덕','map']]},
-  {id:2,name:'오보해변',short:'오보해변',lat:36.432,lng:129.398,showLat:36.4305,showLng:129.4090,cat:'강구·영덕권',color:'#315f7d',tag:'한적한 해변',park:'갓길 이용',wc:'확인 필요',desc:'사람이 비교적 적은 간이 해변 분위기의 포인트. 방문 전 파도와 물때 확인이 좋습니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/오보해변%20영덕','map']]},
-  {id:3,name:'하저해수욕장 위쪽',short:'하저 위쪽',lat:36.452,lng:129.405,showLat:36.4480,showLng:129.3930,cat:'강구·영덕권',color:'#6b4b31',tag:'해수욕장 인근',park:'하저해수욕장 주차 후 이동',wc:'있음',desc:'하저해수욕장 위쪽으로 알려진 포인트. 해수욕장 편의시설과 함께 묶어 보기 좋습니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/하저해수욕장%20영덕','map'],['해수욕장 정보','https://tour.yd.go.kr/mkor/sight/sightView.aspx?idx=244','beach']]},
-  {id:4,name:'대탄해변',short:'대탄해변',lat:36.467,lng:129.410,showLat:36.4620,showLng:129.4240,cat:'강구·영덕권',color:'#174c59',tag:'대탄방파제 옆',park:'협소 주차장 · 일찍 권장',wc:'간이 화장실',desc:'대탄방파제와 함께 묶이는 해변 포인트. 주차가 넉넉하지 않아 이른 시간 방문이 좋습니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/대탄해변%20영덕','map'],['블루로드 정보','https://ydstay.kr/theme/C/35','route']]},
-  {id:5,name:'대탄방파제',short:'대탄방파제',lat:36.471,lng:129.412,showLat:36.4785,showLng:129.3990,cat:'강구·영덕권',color:'#7a5131',tag:'인기 방파제',park:'무료 주차장',wc:'있음 · 샤워장 포함',desc:'가족 단위 방문이 많은 인기 포인트. 방파제 안쪽은 비교적 잔잔하지만 안전장비는 꼭 챙기는 것이 좋습니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/대탄방파제%20영덕','map'],['블루로드 정보','https://ydstay.kr/theme/C/35','route']]},
-  {id:6,name:'대부방파제',short:'대부방파제',lat:36.489,lng:129.418,showLat:36.4925,lng2:129.431,showLng:129.4310,cat:'강구·영덕권',color:'#2f4f36',tag:'스노쿨링 성지',park:'협소',wc:'있음 · 샤워 불가',desc:'물색이 맑아 스노쿨링 후기가 많은 포인트. 수심이 깊어지는 구간이 있어 구명조끼가 필요합니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/대부방파제%20영덕','map']]},
-  {id:7,name:'석동방파제',short:'석동방파제',lat:36.502,lng:129.421,showLat:36.5115,showLng:129.4080,cat:'강구·영덕권',color:'#4c5c73',tag:'주차 극협소',park:'극협소 · 일찍 필수',wc:'없음',desc:'입소문이 난 조용한 방파제 포인트. 주차와 화장실이 불편하므로 준비가 필요합니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/석동방파제%20영덕','map'],['블루로드 정보','https://ydstay.kr/theme/C/35','route']]},
-  {id:8,name:'축산항',short:'축산항',lat:36.525,lng:129.415,showLat:36.5260,showLng:129.4315,cat:'축산·영해권',color:'#315f7d',tag:'항구 · 블루로드',park:'있음',wc:'있음',desc:'영덕의 대표 어항 중 하나로 블루로드와 함께 묶기 좋습니다. 항구 주변이라 현장 안전 확인이 필요합니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/축산항%20영덕','map'],['관광 정보','https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=29e610f0-91e5-41c6-acbf-33e9e27114e9','info'],['바다여행 정보','https://badaon.or.kr/seantour_map/travel/destination/detail.do?destId=FCID111740','beach']]},
-  {id:9,name:'청소년해양센터체험관',short:'체험관',lat:36.538,lng:129.408,showLat:36.5420,showLng:129.3930,cat:'축산·영해권',color:'#6b3f3f',tag:'센터 인근',park:'센터 주차장 이용',wc:'있음',desc:'국립청소년해양센터 해양체험관 인근 포인트. 공식 시설 이용 구역과 해안 진입 동선은 현장에서 확인하세요.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/entry/place/33431861?c=15.00,0,0,2,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606241652&locale=ko&svcName=map_pcv5','map'],['기관 정보','https://www.nymc.or.kr/','info']]},
-  {id:10,name:'덕신민박 앞 소방파제',short:'덕신민박앞',lat:36.548,lng:129.402,showLat:36.5530,showLng:129.4190,cat:'축산·영해권',color:'#7a5436',tag:'숨은 소방파제',park:'민박 앞 공터',wc:'확인 필요',desc:'민박 주변 길로 내려가는 숨은 포인트로 알려져 있습니다. 사유지·주차 민원에 주의해야 합니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/덕신민박%20영덕','map']]},
-  {id:11,name:'경정해변',short:'경정해변',lat:36.557,lng:129.396,showLat:36.5580,showLng:129.3800,cat:'축산·영해권',color:'#244b3e',tag:'조용한 해변',park:'있음',wc:'확인 필요',desc:'대게원조마을 인근의 아담한 해변. 한적한 바다 분위기와 낚시 포인트로도 알려져 있습니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/경정해변%20영덕','map'],['해수욕장 정보','https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=246','beach']]},
-  {id:12,name:'대진스쿠버 앞',short:'대진스쿠버',lat:36.570,lng:129.390,showLat:36.5725,showLng:129.4060,cat:'축산·영해권',color:'#25364f',tag:'스쿠버 포인트',park:'인근 공터',wc:'확인 필요',desc:'대진스쿠버 주변으로 알려진 포인트. 경사 구간이 있어 장비를 들고 이동할 때 주의가 필요합니다.',dir:'right',off:[12,0],links:[['네이버 지도','https://map.naver.com/p/search/대진스쿠버%20영덕','map']]},
-  {id:13,name:'영해면 사진리',short:'영해 사진리',lat:36.578,lng:129.385,showLat:36.5860,showLng:129.3710,cat:'축산·영해권',color:'#6b4b31',tag:'북쪽 숨은 포인트',park:'확인 필요',wc:'있음',desc:'영덕 북쪽으로 올라가는 조용한 포인트. 시설 정보가 적어 현장 확인 후 이용하는 것이 좋습니다.',dir:'left',off:[-12,0],links:[['네이버 지도','https://map.naver.com/p/search/영해면%20사진리%20영덕','map']]}
-];
-
-const categories = ['전체','강구·영덕권','축산·영해권'];
-let activeCat = '전체';
+const places = [{"id": 1, "name": "구계항 방파제", "short": "구계항", "lat": 36.3194137, "lng": 129.3795641, "plat": 36.3194137, "plng": 129.3795641, "color": "#e53935", "desc": "영덕 남쪽 구계항 방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/구계항%20방파제%20영덕", "map"]]}, {"id": 2, "name": "하저해수욕장 위쪽", "short": "하저", "lat": 36.3975, "lng": 129.407, "plat": 36.3975, "plng": 129.407, "color": "#fb8c00", "desc": "하저리해수욕장 위쪽 해안 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/하저해수욕장%20영덕", "map"], ["해수욕장 정보", "https://tour.yd.go.kr/mkor/sight/sightView.aspx?idx=244", "beach"]]}, {"id": 3, "name": "대부방파제", "short": "대부", "lat": 36.4128, "lng": 129.421, "plat": 36.4128, "plng": 129.421, "color": "#43a047", "desc": "영덕읍 대부리 쪽 방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/대부방파제%20영덕", "map"]]}, {"id": 4, "name": "청소년해양센터체험관", "short": "체험관", "lat": 36.4206, "lng": 129.425, "plat": 36.4206, "plng": 129.425, "color": "#8e24aa", "desc": "청소년해양센터체험관 인근 해안 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/entry/place/33431861?c=15.00,0,0,2,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606241652&locale=ko&svcName=map_pcv5", "map"], ["기관 정보", "https://www.nymc.or.kr/", "info"]]}, {"id": 5, "name": "대탄해변", "short": "대탄해변", "lat": 36.4285, "lng": 129.4325, "plat": 36.4281, "plng": 129.4312, "color": "#1e88e5", "desc": "대탄리 해변 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/대탄해변%20영덕", "map"], ["블루로드 정보", "https://ydstay.kr/theme/C/35", "route"]]}, {"id": 6, "name": "대탄방파제", "short": "대탄방파제", "lat": 36.431, "lng": 129.4345, "plat": 36.4317, "plng": 129.4357, "color": "#f4511e", "desc": "대탄해변 위쪽 방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/대탄방파제%20영덕", "map"], ["블루로드 정보", "https://ydstay.kr/theme/C/35", "route"]]}, {"id": 7, "name": "오보해변", "short": "오보해변", "lat": 36.44, "lng": 129.429, "plat": 36.44, "plng": 129.429, "color": "#00acc1", "desc": "오보리 해안 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/오보해변%20영덕", "map"], ["해수욕장 정보", "https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=245", "beach"]]}, {"id": 8, "name": "석동방파제", "short": "석동방파제", "lat": 36.482, "lng": 129.434, "plat": 36.482, "plng": 129.434, "color": "#3949ab", "desc": "석리 쪽 방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/석동방파제%20영덕", "map"], ["블루로드 정보", "https://ydstay.kr/theme/C/35", "route"]]}, {"id": 9, "name": "바다마루 민박", "short": "바다마루", "lat": 36.4985, "lng": 129.4385, "plat": 36.4978, "plng": 129.4377, "color": "#6d4c41", "desc": "축산면 경정3길 36-1 바다마루 민박 기준 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/%EB%B0%94%EB%8B%A4%EB%A7%88%EB%A3%A8%20%EB%AF%BC%EB%B0%95%20%EC%98%81%EB%8D%95", "map"]]}, {"id": 10, "name": "경정리 소방파제", "short": "경정소방", "lat": 36.5015, "lng": 129.4405, "plat": 36.501, "plng": 129.44, "color": "#00897b", "desc": "경정리 105 인근 소방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/%EA%B2%BD%EC%A0%95%EB%A6%AC%20%EC%86%8C%EB%B0%A9%ED%8C%8C%EC%A0%9C", "map"]]}, {"id": 11, "name": "경정해변", "short": "경정해변", "lat": 36.504, "lng": 129.442, "plat": 36.5039, "plng": 129.4428, "color": "#7cb342", "desc": "축산면 경정리 해변 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/경정해변%20영덕", "map"], ["해수욕장 정보", "https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=246", "beach"]]}, {"id": 12, "name": "덕신민박 앞 소방파제", "short": "덕신민박앞", "lat": 36.506, "lng": 129.4435, "plat": 36.5069, "plng": 129.4443, "color": "#8d6e63", "desc": "덕신민박 앞쪽 소방파제 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/덕신민박%20영덕", "map"]]}, {"id": 13, "name": "축산항", "short": "축산항", "lat": 36.508617, "lng": 129.449337, "plat": 36.509, "plng": 129.4487, "color": "#5e35b1", "desc": "경정리 위쪽으로 이어지는 축산항 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/축산항%20영덕", "map"], ["관광 정보", "https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=29e610f0-91e5-41c6-acbf-33e9e27114e9", "info"], ["바다여행 정보", "https://badaon.or.kr/seantour_map/travel/destination/detail.do?destId=FCID111740", "beach"]]}, {"id": 14, "name": "영해면 사진리", "short": "사진리", "lat": 36.535, "lng": 129.438, "plat": 36.535, "plng": 129.438, "color": "#c0ca33", "desc": "영해면 사진리 해안 쪽 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/영해면%20사진리%20영덕", "map"]]}, {"id": 15, "name": "대진스쿠버 앞", "short": "대진스쿠버", "lat": 36.55, "lng": 129.4333, "plat": 36.55, "plng": 129.4333, "color": "#546e7a", "desc": "대진항·대진해수욕장 권역 스쿠버 포인트입니다.", "links": [["네이버 지도", "https://map.naver.com/p/search/대진스쿠버%20영덕", "map"], ["대진해수욕장 정보", "https://tour.yd.go.kr/kor/sight/sightView.aspx?idx=248", "beach"]]}];
 let selectedId = 1;
-const markerLayer = L.layerGroup();
-const lineLayer = L.layerGroup();
-const map = L.map('map',{
-  zoomControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,touchZoom:false,boxZoom:false,keyboard:false,attributionControl:true
-});
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
-markerLayer.addTo(map);lineLayer.addTo(map);
-const filtersEl = document.getElementById('filters');
 const cardsEl = document.getElementById('cards');
+const mapBox = document.getElementById('mapBox');
+let overlays = [];
+let map = null;
+let markerLayer = null;
+let lineLayer = null;
 
-function lockMap(){
-  map.dragging.disable();map.scrollWheelZoom.disable();map.doubleClickZoom.disable();map.touchZoom.disable();map.boxZoom.disable();map.keyboard.disable();
-  const el = map.getContainer();
-  el.addEventListener('wheel', e => e.preventDefault(), {passive:false});
-  el.addEventListener('dblclick', e => e.preventDefault());
-  el.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+function clearOverlays(){
+  overlays.forEach(el => el.remove());
+  overlays = [];
 }
-function currentPlaces(){return activeCat === '전체' ? places : places.filter(p => p.cat === activeCat)}
-function renderFilters(){
-  filtersEl.innerHTML = '';
-  categories.forEach(cat => {
-    const b = document.createElement('button');
-    b.className = 'filter' + (cat === activeCat ? ' active' : '');
-    b.textContent = cat === '전체' ? '전체 13곳' : cat;
-    b.addEventListener('click',()=>{activeCat = cat; selectedId = currentPlaces()[0]?.id || 1; renderAll();});
-    filtersEl.appendChild(b);
+
+function fixedLabelPositions(){
+  const w = mapBox.clientWidth;
+  const h = mapBox.clientHeight;
+  return {
+    1:{x:w*0.18,y:h*0.89,side:'left'},
+    2:{x:w*0.78,y:h*0.78,side:'right'},
+    3:{x:w*0.18,y:h*0.70,side:'left'},
+    4:{x:w*0.78,y:h*0.65,side:'right'},
+    5:{x:w*0.16,y:h*0.60,side:'left'},
+    6:{x:w*0.80,y:h*0.53,side:'right'},
+    7:{x:w*0.16,y:h*0.47,side:'left'},
+    8:{x:w*0.80,y:h*0.38,side:'right'},
+    9:{x:w*0.14,y:h*0.34,side:'left'},
+    10:{x:w*0.80,y:h*0.28,side:'right'},
+    11:{x:w*0.14,y:h*0.22,side:'left'},
+    12:{x:w*0.80,y:h*0.16,side:'right'},
+    13:{x:w*0.14,y:h*0.10,side:'left'},
+    14:{x:w*0.80,y:h*0.06,side:'right'},
+    15:{x:w*0.14,y:h*0.03,side:'left'}
+  };
+}
+
+function drawLeaderLine(from, to, color){
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  const line = document.createElement('div');
+  line.className = 'label-line';
+  line.style.background = color;
+  line.style.left = from.x + 'px';
+  line.style.top = from.y + 'px';
+  line.style.width = len + 'px';
+  line.style.transform = 'rotate(' + angle + 'deg)';
+  mapBox.appendChild(line);
+  overlays.push(line);
+}
+
+function renderOverlayLabels(){
+  if(!map) return;
+  clearOverlays();
+  const labelPos = fixedLabelPositions();
+
+  places.forEach(p=>{
+    const pt = map.latLngToContainerPoint([p.plat, p.plng]);
+    const lp = labelPos[p.id];
+
+    const label = document.createElement('div');
+    label.className = 'map-label';
+    label.style.setProperty('--c', p.color);
+    label.style.left = lp.x + 'px';
+    label.style.top = lp.y + 'px';
+    label.innerHTML = '<span class="badge">'+p.id+'</span>'+p.short;
+    label.addEventListener('click',()=>selectPlace(p.id));
+    mapBox.appendChild(label);
+    overlays.push(label);
+
+    const anchor = {x: lp.x + (lp.side === 'right' ? 0 : 86), y: lp.y + 16};
+    drawLeaderLine({x:pt.x, y:pt.y}, anchor, p.color);
   });
 }
+
 function renderMarkers(){
-  markerLayer.clearLayers(); lineLayer.clearLayers();
-  const list = currentPlaces();
-  if(list.length > 1){
-    L.polyline(list.map(p=>[p.lat,p.lng]),{color:'#6b6258',weight:2,dashArray:'6 6',opacity:.28,interactive:false}).addTo(lineLayer);
-  }
-  list.forEach(p=>{
-    const on = p.id === selectedId;
-    const icon = L.divIcon({className:'',html:`<div style="width:${on?10:8}px;height:${on?10:8}px;border-radius:50%;background:${p.color};border:0;box-shadow:none;"></div>`,iconSize:[12,12],iconAnchor:[6,6]});
-    const marker = L.marker([p.showLat,p.showLng],{icon,keyboard:false,zIndexOffset:on?1000:p.id*10}).addTo(markerLayer);
-    marker.bindTooltip(`<span class="tip-num" style="background:${p.color};">${p.id}</span>${p.short}`,{permanent:true,direction:p.dir,offset:p.off,className:'place-tip'});
-    marker.openTooltip();
-    marker.on('click',()=>selectPlace(p.id));
-    setTimeout(()=>{const el = marker.getTooltip()?.getElement(); if(el) el.addEventListener('click',()=>selectPlace(p.id));},120);
+  if(!map) return;
+  markerLayer.clearLayers();
+  lineLayer.clearLayers();
+
+  L.polyline(places.map(p=>[p.plat,p.plng]),{
+    color:'#6b6258',
+    weight:2,
+    dashArray:'6 6',
+    opacity:.22,
+    interactive:false
+  }).addTo(lineLayer);
+
+  places.forEach(p=>{
+    const icon = L.divIcon({
+      className:'',
+      html:'<div class="dot-pin" style="--c:'+p.color+';"></div>',
+      iconSize:[12,12],
+      iconAnchor:[6,6]
+    });
+
+    L.marker([p.plat,p.plng],{
+      icon,
+      keyboard:false,
+      zIndexOffset:p.id === selectedId ? 1000 : p.id*10
+    }).addTo(markerLayer).on('click',()=>selectPlace(p.id));
   });
-  fitMap();
 }
+
 function fitMap(){
-  const list = currentPlaces(); if(!list.length) return;
-  setTimeout(()=>{
-    map.invalidateSize(false);
-    const bounds = L.latLngBounds(list.map(p=>[p.showLat,p.showLng]));
-    map.fitBounds(bounds,{paddingTopLeft:[52,48],paddingBottomRight:[52,48],maxZoom:activeCat==='전체'?12:13,animate:false});
-  },80);
-  setTimeout(()=>map.invalidateSize(false),280);
+  if(!map) return;
+  map.invalidateSize();
+  const bounds = L.latLngBounds([[36.305,129.368],[36.558,129.452]]);
+  map.fitBounds(bounds,{
+    paddingTopLeft:[14,20],
+    paddingBottomRight:[14,20],
+    maxZoom:11,
+    animate:false
+  });
+  setTimeout(renderOverlayLabels,120);
 }
-function renderCards(){
-  cardsEl.innerHTML = '';
-  const list = currentPlaces();
-  if(!list.length){cardsEl.innerHTML='<div class="nores">해당 구역 장소가 없습니다.</div>';return;}
-  list.forEach(p=>{
-    const card = document.createElement('article');
-    card.className = 'card' + (p.id===selectedId ? ' active pop' : '');
-    card.id = 'card-' + p.id;
-    card.style.setProperty('--c',p.color);
-    const links = p.links.map(([label,url,type])=>`<a class="btn ${type}" href="${url}" target="_blank" rel="noopener">${label}</a>`).join('');
-    card.innerHTML = `<div class="card-main"><div class="num" style="background:${p.color};">${p.id}</div><div><div class="name">${p.name}</div><div class="desc">${p.desc}</div></div></div><div class="btns">${links}</div>`;
-    card.addEventListener('click',e=>{if(e.target.closest('.btn')) return; selectPlace(p.id);});
-    cardsEl.appendChild(card);
+
+function selectPlace(id){
+  selectedId = Number(id);
+
+  document.querySelectorAll('.card').forEach(card=>{
+    card.classList.toggle('active', Number(card.dataset.id) === selectedId);
+  });
+
+  renderMarkers();
+  renderOverlayLabels();
+
+  const card = document.getElementById('card-'+selectedId);
+  if(card){
+    cardsEl.prepend(card);
+    cardsEl.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function bindStaticEvents(){
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click',e=>{
+      if(e.target.closest('.btn')) return;
+      selectPlace(card.dataset.id);
+    });
   });
 }
-function selectPlace(id){
-  selectedId = id; renderCards(); renderMarkers();
-  const card = document.getElementById('card-'+id);
-  if(card){cardsEl.prepend(card);cardsEl.scrollTo({top:0,behavior:'smooth'});}
+
+function initMap(){
+  if(typeof L === 'undefined') return;
+  map = L.map('map',{
+    zoomControl:false,
+    dragging:false,
+    scrollWheelZoom:false,
+    doubleClickZoom:false,
+    touchZoom:false,
+    boxZoom:false,
+    keyboard:false,
+    attributionControl:true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap',
+    maxZoom:18
+  }).addTo(map);
+
+  markerLayer = L.layerGroup().addTo(map);
+  lineLayer = L.layerGroup().addTo(map);
+
+  map.whenReady(()=>{
+    renderMarkers();
+    fitMap();
+  });
 }
-function renderAll(){renderFilters();renderCards();renderMarkers();}
-lockMap(); renderAll();
-window.addEventListener('load',()=>{setTimeout(fitMap,120);setTimeout(fitMap,500);});
+
+bindStaticEvents();
+window.addEventListener('load',()=>{
+  initMap();
+  setTimeout(fitMap,500);
+});
 window.addEventListener('resize',()=>setTimeout(fitMap,120));
 </script>
 </body>
