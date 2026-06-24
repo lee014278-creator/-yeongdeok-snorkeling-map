@@ -69,9 +69,18 @@ html,body{
 }
 .leaflet-tooltip.place-tip::before{display:none}
 .tip-num{
-  display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
-  color:#fff;font-size:13px;font-weight:900;margin-right:5px;vertical-align:middle;
-  box-shadow:0 1px 4px rgba(0,0,0,.28);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  color:#fff;
+  font-size:11.5px;
+  font-weight:800;
+  margin-right:4px;
+  vertical-align:middle;
+  box-shadow:0 1px 3px rgba(0,0,0,.22);
 }
 .filter-bar{
   flex:0 0 auto;display:flex;gap:8px;padding:11px 12px 10px;
@@ -94,18 +103,16 @@ html,body{
 }
 .card:hover{box-shadow:0 5px 18px rgba(0,0,0,.12);transform:translateY(-1px)}
 .card.active{order:-1;border-color:var(--c);box-shadow:0 6px 22px rgba(0,0,0,.14)}
-.card-main{display:flex;gap:12px;padding:15px 15px 12px}
+.card-main{display:flex;gap:12px;padding:15px 15px 4px}
 .num{
-  flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:15px;font-weight:900;margin-top:1px;
+  flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:13px;font-weight:800;margin-top:1px;
 }
 .name{font-size:17px;line-height:1.35;font-weight:900;color:#171717;margin-bottom:5px;word-break:keep-all}
 .desc{font-size:13.5px;color:var(--muted);line-height:1.58;word-break:keep-all}
-.meta{margin-top:7px;font-size:13px;color:#4f565e;line-height:1.55;word-break:keep-all}
-.tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
-.tag{display:inline-flex;align-items:center;min-height:27px;padding:5px 10px;border-radius:999px;font-size:12.5px;font-weight:900;background:#efe6d8;color:#5c432a}
-.btns{display:none;gap:8px;flex-wrap:wrap;padding:0 15px 15px 59px}
-.card.active .btns{display:flex}
+
+.btns{display:flex;gap:8px;flex-wrap:wrap;padding:10px 15px 15px 59px}
+
 .btn{
   min-height:44px;padding:10px 15px;border-radius:999px;font-size:15px;font-weight:900;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;border:0;white-space:nowrap;
@@ -123,11 +130,24 @@ html,body{
   .map-title{top:10px;left:10px;font-size:14px;padding:8px 12px}
   .map-sub{font-size:11.5px;padding:6px 10px}
   .leaflet-tooltip.place-tip{font-size:12.8px;padding:5px 10px 5px 6px}
-  .tip-num{width:23px;height:23px;font-size:12.5px;margin-right:5px}
+  .tip-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  color:#fff;
+  font-size:11.5px;
+  font-weight:800;
+  margin-right:4px;
+  vertical-align:middle;
+  box-shadow:0 1px 3px rgba(0,0,0,.22);
+}
   .filter{font-size:14px;min-height:42px;padding:10px 14px}
   .name{font-size:16px}.desc{font-size:13px}.meta{font-size:12.8px}
   .btn{font-size:14.5px;min-height:44px;padding:10px 14px}
-  .btns{padding-left:15px}
+  .btns{padding:10px 15px 15px 15px}
 }
 @media(max-height:620px){:root{--map-h:420px}}
 </style>
@@ -198,7 +218,7 @@ function renderMarkers(){
   }
   list.forEach(p=>{
     const on = p.id === selectedId;
-    const icon = L.divIcon({className:'',html:`<div style="width:${on?18:14}px;height:${on?18:14}px;border-radius:50%;background:${p.color};border:1px solid rgba(0,0,0,.25);box-shadow:0 2px 7px rgba(0,0,0,.36);"></div>`,iconSize:[24,24],iconAnchor:[12,12]});
+    const icon = L.divIcon({className:'',html:`<div style="width:${on?14:11}px;height:${on?14:11}px;border-radius:50%;background:${p.color};border:1px solid rgba(0,0,0,.18);box-shadow:0 1px 4px rgba(0,0,0,.28);"></div>`,iconSize:[24,24],iconAnchor:[12,12]});
     const marker = L.marker([p.showLat,p.showLng],{icon,keyboard:false,zIndexOffset:on?1000:p.id*10}).addTo(markerLayer);
     marker.bindTooltip(`<span class="tip-num" style="background:${p.color};">${p.id}</span>${p.short}`,{permanent:true,direction:p.dir,offset:p.off,className:'place-tip'});
     marker.openTooltip();
@@ -226,7 +246,7 @@ function renderCards(){
     card.id = 'card-' + p.id;
     card.style.setProperty('--c',p.color);
     const links = p.links.map(([label,url,type])=>`<a class="btn ${type}" href="${url}" target="_blank" rel="noopener">${label}</a>`).join('');
-    card.innerHTML = `<div class="card-main"><div class="num" style="background:${p.color};">${p.id}</div><div><div class="name">${p.name}</div><div class="desc">${p.desc}</div><div class="meta">🅿️ ${p.park}<br>🚻 ${p.wc}</div><div class="tags"><span class="tag">${p.tag}</span><span class="tag">${p.cat}</span></div></div></div><div class="btns">${links}</div>`;
+    card.innerHTML = `<div class="card-main"><div class="num" style="background:${p.color};">${p.id}</div><div><div class="name">${p.name}</div><div class="desc">${p.desc}</div></div></div><div class="btns">${links}</div>`;
     card.addEventListener('click',e=>{if(e.target.closest('.btn')) return; selectPlace(p.id);});
     cardsEl.appendChild(card);
   });
