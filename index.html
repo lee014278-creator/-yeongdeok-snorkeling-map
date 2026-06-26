@@ -65,13 +65,13 @@
   }
   .leaflet-tooltip.place-tip::before { display: none; }
 
-  /* 마커: 번호를 기준점으로, 장소명은 오른쪽 / 버튼은 왼쪽에 절대배치 */
+  /* 마커: 번호 기준점, 장소명은 왼쪽(지도쪽) / 버튼은 오른쪽 */
   .marker-wrap { position: relative; width: 26px; height: 26px; }
   .tip-num { position: absolute; left: 0; top: 0; }
 
-  /* 장소명: 번호 오른쪽(바다 쪽). 진한 글자 + 흰 외곽선 */
+  /* 장소명: 번호 왼쪽. 진한 글자 + 흰 외곽선 */
   .m-name {
-    position: absolute; left: 32px; top: 50%; transform: translateY(-50%);
+    position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
     font-size: 13.5px; font-weight: 800; color: #14233a; white-space: nowrap;
     text-shadow:
       -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff,
@@ -79,12 +79,12 @@
     pointer-events: none;
   }
 
-  /* 버튼: 평소 숨김. 번호 왼쪽에 화살표로 번호를 가리키며 등장 */
+  /* 버튼: 평소 숨김. 번호 오른쪽에 화살표로 번호를 가리키며 등장 */
   .side-btn, .side-btn:link, .side-btn:visited, .side-btn:hover, .side-btn:active {
     color: #ffffff !important;
   }
   .side-btn {
-    display: none; position: absolute; right: 35px; top: 50%;
+    display: none; position: absolute; left: 35px; top: 50%;
     transform: translateY(-50%);
     min-height: 34px; padding: 8px 14px; border-radius: 10px;
     font-size: 13px; font-weight: 800; white-space: nowrap;
@@ -92,11 +92,12 @@
     text-decoration: none; background: #15294a;
     box-shadow: 0 2px 10px rgba(0,0,0,.35);
   }
-  .side-btn::after {
-    content: ""; position: absolute; right: -7px; top: 50%;
+  /* 화살표(왼쪽 번호를 가리킴) */
+  .side-btn::before {
+    content: ""; position: absolute; left: -7px; top: 50%;
     transform: translateY(-50%);
     border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-    border-left: 8px solid #1f3a5f;
+    border-right: 8px solid #15294a;
   }
   .marker-wrap.open .side-btn { display: inline-flex; }
   .marker-wrap.open { z-index: 1000 !important; }
@@ -157,10 +158,10 @@ function buildMarkers(list){
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
 
-  // 양 끝 장소에 맞춰 범위 자르기. 번호를 화면 왼쪽에 바짝 붙여 오른쪽 장소명 공간 최대 확보.
+  // 양 끝 장소에 맞춰 범위 자르기. 번호를 화면 오른쪽에 두고 장소명(긴 텍스트)을 왼쪽으로 펼침.
   const lats = list.map(s=>s.lat), lngs = list.map(s=>s.lng);
   map.fitBounds([[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]],
-    { paddingTopLeft:[30,46], paddingBottomRight:[260,60], maxZoom:13 });
+    { paddingTopLeft:[230,24], paddingBottomRight:[110,120], maxZoom:13 });
 
   // 픽셀 좌표로 변환 (실제 경도 살려 해안선 모양 유지)
   const sorted = [...list].sort((a,b)=>a.lat-b.lat);
@@ -169,8 +170,8 @@ function buildMarkers(list){
     return { s, x:p.x, y:p.y };
   });
   pts.sort((a,b)=>a.y-b.y);
-  // 세로 최소 간격만 보장 (좌우는 실제 위치 그대로 = 해안선 모양)
-  const MINY = 28;
+  // 세로 최소 간격 보장 (겹침 방지). 라벨 한 줄 높이보다 넉넉히.
+  const MINY = 32;
   for (let i=1; i<pts.length; i++){
     if (pts[i].y - pts[i-1].y < MINY) pts[i].y = pts[i-1].y + MINY;
   }
@@ -181,12 +182,12 @@ function buildMarkers(list){
     const ll = map.containerPointToLatLng([pt.x, pt.y]);
     const nq = encodeURIComponent(s.name);
 
-    // 전부 통일: [버튼(숨김)] [번호] [장소명] - 번호는 해안가(왼쪽), 장소명은 바다쪽(오른쪽)
-    // 버튼은 장소명 반대쪽(왼쪽)에서 뜨고 화살표로 번호를 가리킴
+    // [장소명(왼쪽)] [번호] [네이버버튼(오른쪽,숨김)]
+    // 긴 장소명은 번호 왼쪽(지도쪽)으로 펼쳐 안 잘림. 작은 네이버 버튼은 클릭 시 오른쪽에 화살표로.
     const inner =
-      `<a class="side-btn" href="https://map.naver.com/p/search/${nq}" target="_blank" rel="noopener">네이버 지도</a>`+
+      `<span class="m-name">${s.name}</span>`+
       `<div class="tip-num" data-n="${s.n}">${s.n}</div>`+
-      `<span class="m-name">${s.name}</span>`;
+      `<a class="side-btn" href="https://map.naver.com/p/search/${nq}" target="_blank" rel="noopener">네이버 지도</a>`;
     const icon = L.divIcon({
       className:"", html:`<div class="marker-wrap" data-mn="${s.n}">${inner}</div>`,
       iconSize:[26,26], iconAnchor:[13,13]
