@@ -79,7 +79,7 @@
     pointer-events: none;
   }
 
-  /* 버튼: 평소 숨김. 번호 오른쪽에 화살표로 번호를 가리키며 등장 */
+  /* 버튼: 평소 숨김. 클릭 시 번호 오른쪽에 화살표로 번호를 가리키며 등장 */
   .side-btn, .side-btn:link, .side-btn:visited, .side-btn:hover, .side-btn:active {
     color: #ffffff !important;
   }
@@ -92,7 +92,6 @@
     text-decoration: none; background: #15294a;
     box-shadow: 0 2px 10px rgba(0,0,0,.35);
   }
-  /* 화살표(왼쪽 번호를 가리킴) */
   .side-btn::before {
     content: ""; position: absolute; left: -7px; top: 50%;
     transform: translateY(-50%);
@@ -158,23 +157,29 @@ function buildMarkers(list){
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
 
-  // 양 끝 장소에 맞춰 범위 자르기. 번호를 화면 오른쪽에 두고 장소명(긴 텍스트)을 왼쪽으로 펼침.
+  // 지도 범위: 해안선(장소들 경도)이 화면 가로 중앙에 오게. 바다 반 / 육지 반 보이게.
   const lats = list.map(s=>s.lat), lngs = list.map(s=>s.lng);
-  map.fitBounds([[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]],
-    { paddingTopLeft:[230,24], paddingBottomRight:[110,120], maxZoom:13 });
+  const minLat=Math.min(...lats), maxLat=Math.max(...lats);
+  const cLng=(Math.min(...lngs)+Math.max(...lngs))/2;
+  const halfLng=0.02;
+  map.fitBounds([[minLat, cLng-halfLng],[maxLat, cLng+halfLng]],
+    { paddingTopLeft:[20,24], paddingBottomRight:[20,120], maxZoom:14 });
 
-  // 픽셀 좌표로 변환 (실제 경도 살려 해안선 모양 유지)
+  const W = map.getSize().x;
+
+  // 픽셀 변환 후 번호를 한 세로줄(화면 중앙)로 정렬, 장소명은 왼쪽으로.
   const sorted = [...list].sort((a,b)=>a.lat-b.lat);
   const pts = sorted.map(s => {
     const p = map.latLngToContainerPoint([s.lat, s.lng]);
     return { s, x:p.x, y:p.y };
   });
   pts.sort((a,b)=>a.y-b.y);
-  // 세로 최소 간격 보장 (겹침 방지). 라벨 한 줄 높이보다 넉넉히.
   const MINY = 32;
   for (let i=1; i<pts.length; i++){
     if (pts[i].y - pts[i-1].y < MINY) pts[i].y = pts[i-1].y + MINY;
   }
+  // 번호는 실제 좌표(해안선 모양)대로. 좌우 위치 그대로 두어 해안선을 따라 구불구불 배치.
+  // (일렬 고정 안 함)
 
   const mapW = map.getSize().x;
   pts.forEach((pt, idx) => {
@@ -182,8 +187,7 @@ function buildMarkers(list){
     const ll = map.containerPointToLatLng([pt.x, pt.y]);
     const nq = encodeURIComponent(s.name);
 
-    // [장소명(왼쪽)] [번호] [네이버버튼(오른쪽,숨김)]
-    // 긴 장소명은 번호 왼쪽(지도쪽)으로 펼쳐 안 잘림. 작은 네이버 버튼은 클릭 시 오른쪽에 화살표로.
+    // [장소명(왼쪽)] [번호] [버튼(숨김)] - 번호는 중앙 한 줄, 장소명은 왼쪽으로 펼침
     const inner =
       `<span class="m-name">${s.name}</span>`+
       `<div class="tip-num" data-n="${s.n}">${s.n}</div>`+
