@@ -10,125 +10,128 @@
   html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
   .wrap { height: 100vh; display: flex; flex-direction: column; overflow: hidden; background: #f4f5f7; }
 
-  .map-box { flex: 0 0 760px; position: relative; }
+  /* 지도만 꽉 채움 (아래 카드 목록 없음) */
+  .map-box { flex: 1; position: relative; min-height: 0; }
   #map { width: 100%; height: 100%; background: #aadaff; }
 
+  /* 지도 위 안내 띠 */
+  .map-hint {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    z-index: 600;
+    background: rgba(31,58,95,.92); color: #fff;
+    font-size: 13px; font-weight: 700;
+    padding: 8px 15px; border-radius: 999px;
+    white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    pointer-events: none;
+  }
+
+  /* 필터 */
   .filters {
-    flex: 0 0 auto;
-    display: flex; gap: 7px; padding: 11px 12px;
+    position: absolute; left: 8px; right: 8px; bottom: 10px; z-index: 600;
+    display: flex; gap: 7px; justify-content: center;
     overflow-x: auto; -webkit-overflow-scrolling: touch;
-    background: #fff; border-bottom: 1px solid #e6e8eb;
   }
   .filters::-webkit-scrollbar { display: none; }
   .fbtn {
     flex: 0 0 auto;
-    min-height: 38px; padding: 8px 16px;
-    border: 1.5px solid #1f3a5f; border-radius: 999px;
+    min-height: 38px; padding: 8px 15px;
+    border: 0; border-radius: 999px;
     background: #fff; color: #1f3a5f;
-    font-size: 14px; font-weight: 700; white-space: nowrap;
-    cursor: pointer; transition: .15s;
+    font-size: 13.5px; font-weight: 700; white-space: nowrap;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.18);
   }
   .fbtn.on { background: #1f3a5f; color: #fff; }
 
-  .cards {
-    flex: 1; min-height: 0;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-    padding: 12px 12px 28px;
-  }
-  .card {
-    background: #fff; border: 1px solid #e6e8eb; border-radius: 14px;
-    padding: 15px 16px 16px; margin-bottom: 11px;
-    cursor: pointer; transition: .15s;
-  }
-  .card.on { border-color: #1f3a5f; box-shadow: 0 3px 14px rgba(31,58,95,.16); }
-  .card-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
-  .card-num {
-    flex: 0 0 auto;
-    width: 25px; height: 25px; border-radius: 50%;
-    background: #1f3a5f; color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 600;
-  }
-  .card-name { font-size: 16.5px; font-weight: 800; color: #16202e; }
-  .card-desc { font-size: 13.5px; line-height: 1.6; color: #4a5360; margin-bottom: 12px; }
-  .card-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-  .btn {
-    min-height: 44px; padding: 10px 16px; border-radius: 999px;
-    font-size: 14.5px; font-weight: 700;
-    display: inline-flex; align-items: center; justify-content: center;
-    text-decoration: none; color: #fff; background: #1f3a5f;
-  }
-
+  /* 번호 배지 */
   .tip-num {
-    width: 21px; height: 21px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: #1f3a5f; color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 500;
-    text-shadow: none !important; box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    border: 1.5px solid #fff;
+    font-size: 14px; font-weight: 600;
+    text-shadow: none !important; box-shadow: 0 1px 4px rgba(0,0,0,.35);
+    border: 2px solid #fff; cursor: pointer;
   }
-  .leaflet-tooltip .tip-num { text-shadow: none !important; font-weight: 500 !important; }
+  .tip-num.on { background: #c0392b; transform: scale(1.15); }
 
+  /* 평소 표시되는 번호+장소명 라벨 (지그재그) */
   .leaflet-tooltip.place-tip {
     background: transparent; border: 0; box-shadow: none; padding: 0;
-    font-size: 13px; font-weight: 700; color: #16202e;
+    font-size: 13px; font-weight: 800; color: #fff;
     white-space: nowrap;
     text-shadow:
-      -1.2px -1.2px 0 #fff, 1.2px -1.2px 0 #fff,
-      -1.2px 1.2px 0 #fff, 1.2px 1.2px 0 #fff,
-      0 0 3px #fff;
+      -1.4px -1.4px 0 #1f3a5f, 1.4px -1.4px 0 #1f3a5f,
+      -1.4px 1.4px 0 #1f3a5f, 1.4px 1.4px 0 #1f3a5f,
+      0 0 4px rgba(0,0,0,.5);
   }
   .leaflet-tooltip.place-tip::before { display: none; }
 
-  .marker-wrap { display: flex; align-items: center; }
+  /* 마커: 번호를 기준점으로, 장소명은 오른쪽 / 버튼은 왼쪽에 절대배치 */
+  .marker-wrap { position: relative; width: 26px; height: 26px; }
+  .tip-num { position: absolute; left: 0; top: 0; }
+
+  /* 장소명: 번호 오른쪽(바다 쪽). 진한 글자 + 흰 외곽선 */
+  .m-name {
+    position: absolute; left: 32px; top: 50%; transform: translateY(-50%);
+    font-size: 13.5px; font-weight: 800; color: #14233a; white-space: nowrap;
+    text-shadow:
+      -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff,
+      -1.5px 1.5px 0 #fff, 1.5px 1.5px 0 #fff, 0 0 3px #fff;
+    pointer-events: none;
+  }
+
+  /* 버튼: 평소 숨김. 번호 왼쪽에 화살표로 번호를 가리키며 등장 */
+  .side-btn, .side-btn:link, .side-btn:visited, .side-btn:hover, .side-btn:active {
+    color: #ffffff !important;
+  }
+  .side-btn {
+    display: none; position: absolute; right: 35px; top: 50%;
+    transform: translateY(-50%);
+    min-height: 34px; padding: 8px 14px; border-radius: 10px;
+    font-size: 13px; font-weight: 800; white-space: nowrap;
+    align-items: center; justify-content: center;
+    text-decoration: none; background: #15294a;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+  }
+  .side-btn::after {
+    content: ""; position: absolute; right: -7px; top: 50%;
+    transform: translateY(-50%);
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+    border-left: 8px solid #1f3a5f;
+  }
+  .marker-wrap.open .side-btn { display: inline-flex; }
+  .marker-wrap.open { z-index: 1000 !important; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="map-box"><div id="map"></div></div>
-  <div class="filters" id="filters"></div>
-  <div class="cards" id="cards"></div>
+  <div class="map-box">
+    <div id="map"></div>
+    <div class="map-hint">📍 번호를 누르면 네이버 지도 링크가 나와요</div>
+    <div class="filters" id="filters"></div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// 남 -> 북 위도순. 번호=거리순.
-// lat/lng = 실제 좌표 (네이버 지도 버튼은 장소명 검색이라 정확)
-// 지도 마커는 실제 좌표로 표시. 지도 범위를 장소 양 끝에 맞춰 확대해 세로로 펼침.
-// 실제로 바로 붙은 일부 지점만 dlat로 살짝 분리(라벨 겹침 방지).
+// 글 목록을 거리순(남->북)으로 정렬해 번호 1~15 재배정.
+// 경도는 실제 영덕 해안선(약 129.37~129.45)에 맞춰 보정. 이전 값이 동쪽(바다)으로 치우쳐 있었음.
 const rawSpots = [
-  { name:"구계항 방파제",          lat:36.3661, lng:129.4179, region:"yeongdeok",
-    desc:"강구항에서 가까운 남쪽 포인트. 방파제 안쪽이 비교적 잔잔해 가볍게 들르기 좋습니다." },
-  { name:"오보해수욕장",            lat:36.4286, lng:129.4316, region:"yeongdeok",
-    desc:"모래와 바위가 섞인 해변. 입수 지점이 완만해 초보자도 부담이 덜합니다." },
-  { name:"창포리 숨은 스팟",        lat:36.4423, lng:129.4380, region:"yeongdeok",
-    desc:"창포리 해안의 작은 포인트. 사람이 적어 조용히 물놀이하기 좋은 자리입니다." },
-  { name:"대탄해변",               lat:36.4512, lng:129.4408, region:"yeongdeok",
-    dlat:36.4495, desc:"맑은 물색이 좋은 해변. 바위 주변으로 작은 어류가 잘 보입니다." },
-  { name:"대탄방파제",             lat:36.4528, lng:129.4421, region:"yeongdeok",
-    dlat:36.4555, desc:"대탄해변 옆 방파제. 안쪽 수면이 잔잔해 입수와 휴식이 편합니다." },
-  { name:"대부방파제",             lat:36.4602, lng:129.4456, region:"yeongdeok",
-    desc:"영덕대게로 변에 있어 접근이 쉬운 포인트. 방파제 안쪽이 안정적입니다." },
-  { name:"국립청소년해양센터",       lat:36.4748, lng:129.4521, region:"yeongdeok",
-    desc:"해양 체험 시설이 있는 곳. 주변 바닷가에서 물놀이를 곁들이기 좋습니다." },
-  { name:"석동방파제",             lat:36.4983, lng:129.4503, region:"chuksan", dir:"left",
-    desc:"축산면 석리의 방파제. 바위 지대가 이어져 스노클링 시야가 좋은 편입니다." },
-  { name:"경정해변",              lat:36.5040, lng:129.4571, region:"chuksan",
-    dlat:36.5010, desc:"물이 맑기로 알려진 해변. 자갈과 바위 사이로 물속이 잘 보입니다." },
-  { name:"경정리 105 소방파제",     lat:36.5053, lng:129.4585, region:"chuksan",
-    dlat:36.5065, desc:"경정해변 인근 소방파제. 안쪽이 잔잔해 가볍게 입수하기 좋습니다." },
-  { name:"바다마루민박 앞 포인트",   lat:36.5071, lng:129.4593, region:"chuksan",
-    dlat:36.5125, desc:"민박 바로 앞 포인트. 숙소에서 곧바로 물에 들어갈 수 있는 자리입니다." },
-  { name:"축산항",                lat:36.5118, lng:129.4528, region:"chuksan",
-    dlat:36.5185, desc:"축산면의 거점 항구. 주변에 편의시설이 있어 베이스로 삼기 좋습니다." },
-  { name:"덕신민박 앞 소방파제",     lat:36.5402, lng:129.4495, region:"yeonghae",
-    desc:"민박 앞 작은 방파제. 한적하고 안쪽 수면이 안정적입니다." },
-  { name:"대진스쿠버 앞",          lat:36.5471, lng:129.4488, region:"yeonghae",
-    desc:"다이빙 숍 앞 포인트. 장비 대여와 입수가 한 자리에서 가능합니다." },
-  { name:"영해면 사진리 숨은 포인트", lat:36.5558, lng:129.4467, region:"yeonghae",
-    desc:"사진리 끝자락의 조용한 포인트. 사람이 거의 없어 호젓하게 즐길 수 있습니다." },
+  { name:"구계항 방파제",          lat:36.3661, lng:129.3960, region:"yeongdeok" },
+  { name:"오보해수욕장",            lat:36.4286, lng:129.4090, region:"yeongdeok" },
+  { name:"창포리 숨은 스팟",        lat:36.4423, lng:129.4140, region:"yeongdeok" },
+  { name:"대탄해변",               lat:36.4512, lng:129.4165, region:"yeongdeok" },
+  { name:"대탄방파제",             lat:36.4528, lng:129.4178, region:"yeongdeok" },
+  { name:"대부방파제",             lat:36.4602, lng:129.4205, region:"yeongdeok" },
+  { name:"국립청소년해양센터",       lat:36.4748, lng:129.4255, region:"yeongdeok" },
+  { name:"석동방파제",             lat:36.4983, lng:129.4360, region:"chuksan" },
+  { name:"경정해변",              lat:36.5040, lng:129.4420, region:"chuksan" },
+  { name:"경정리 105 소방파제",     lat:36.5053, lng:129.4432, region:"chuksan" },
+  { name:"바다마루민박 앞 포인트",   lat:36.5071, lng:129.4440, region:"chuksan" },
+  { name:"축산항",                lat:36.5118, lng:129.4470, region:"chuksan" },
+  { name:"덕신민박 앞 소방파제",     lat:36.5402, lng:129.4380, region:"yeonghae" },
+  { name:"대진스쿠버 앞",          lat:36.5471, lng:129.4375, region:"yeonghae" },
+  { name:"영해면 사진리 숨은 포인트", lat:36.5558, lng:129.4360, region:"yeonghae" },
 ];
-// 거리순(남->북)으로 정렬 후 번호 1~15 재배정
 const spots = [...rawSpots].sort((a,b)=>a.lat-b.lat).map((s,i)=>({ ...s, n:i+1 }));
 
 const map = L.map('map', {
@@ -141,77 +144,77 @@ map.dragging.disable(); map.scrollWheelZoom.disable(); map.doubleClickZoom.disab
 map.touchZoom.disable(); map.boxZoom.disable(); map.keyboard.disable();
 
 const filters = [
-  { key:"all",       label:"전체" },
+  { key:"all", label:"전체" },
   { key:"yeongdeok", label:"영덕읍권" },
-  { key:"chuksan",   label:"축산권" },
-  { key:"yeonghae",  label:"영해권" },
+  { key:"chuksan", label:"축산권" },
+  { key:"yeonghae", label:"영해권" },
 ];
 
 let markers = {};
 let current = "all";
 
-function tipDir(dir){
-  if(dir==="left")  return { direction:"left",  offset:[-13,0] };
-  if(dir==="right") return { direction:"right", offset:[13,0] };
-  if(dir==="top")   return { direction:"top",   offset:[0,-13] };
-  return { direction:"bottom", offset:[0,13] };
-}
-function dlat(s){ return s.dlat != null ? s.dlat : s.lat; }
-function dlng(s){ return s.dlng != null ? s.dlng : s.lng; }
-
-function drawMarkers(list){
+function buildMarkers(list){
   Object.values(markers).forEach(m => map.removeLayer(m));
   markers = {};
-  const lngsAll = list.map(s=>dlng(s));
-  const cLngRef = (Math.min(...lngsAll) + Math.max(...lngsAll)) / 2;
-  list.forEach(s => {
+
+  // 양 끝 장소에 맞춰 범위 자르기. 번호를 화면 왼쪽에 바짝 붙여 오른쪽 장소명 공간 최대 확보.
+  const lats = list.map(s=>s.lat), lngs = list.map(s=>s.lng);
+  map.fitBounds([[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]],
+    { paddingTopLeft:[30,46], paddingBottomRight:[260,60], maxZoom:13 });
+
+  // 픽셀 좌표로 변환 (실제 경도 살려 해안선 모양 유지)
+  const sorted = [...list].sort((a,b)=>a.lat-b.lat);
+  const pts = sorted.map(s => {
+    const p = map.latLngToContainerPoint([s.lat, s.lng]);
+    return { s, x:p.x, y:p.y };
+  });
+  pts.sort((a,b)=>a.y-b.y);
+  // 세로 최소 간격만 보장 (좌우는 실제 위치 그대로 = 해안선 모양)
+  const MINY = 28;
+  for (let i=1; i<pts.length; i++){
+    if (pts[i].y - pts[i-1].y < MINY) pts[i].y = pts[i-1].y + MINY;
+  }
+
+  const mapW = map.getSize().x;
+  pts.forEach((pt, idx) => {
+    const s = pt.s;
+    const ll = map.containerPointToLatLng([pt.x, pt.y]);
+    const nq = encodeURIComponent(s.name);
+
+    // 전부 통일: [버튼(숨김)] [번호] [장소명] - 번호는 해안가(왼쪽), 장소명은 바다쪽(오른쪽)
+    // 버튼은 장소명 반대쪽(왼쪽)에서 뜨고 화살표로 번호를 가리킴
+    const inner =
+      `<a class="side-btn" href="https://map.naver.com/p/search/${nq}" target="_blank" rel="noopener">네이버 지도</a>`+
+      `<div class="tip-num" data-n="${s.n}">${s.n}</div>`+
+      `<span class="m-name">${s.name}</span>`;
     const icon = L.divIcon({
-      className:"", html:`<div class="marker-wrap"><div class="tip-num">${s.n}</div></div>`,
-      iconSize:[21,21], iconAnchor:[10,10]
+      className:"", html:`<div class="marker-wrap" data-mn="${s.n}">${inner}</div>`,
+      iconSize:[26,26], iconAnchor:[13,13]
     });
-    const mk = L.marker([dlat(s), dlng(s)], { icon }).addTo(map);
-    const d = tipDir(s.dir ? s.dir : (dlng(s) >= cLngRef ? "right" : "left"));
-    mk.bindTooltip(s.name, {
-      permanent:true, className:"place-tip",
-      direction:d.direction, offset:d.offset, opacity:1
-    });
-    mk.on('click', () => selectCard(s.n));
+    const mk = L.marker(ll, { icon }).addTo(map);
+    mk.on('click', () => selectSpot(s.n));
     markers[s.n] = mk;
   });
-  const lats = list.map(s=>dlat(s)), lngs = list.map(s=>dlng(s));
-  const bounds = [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]];
-  map.fitBounds(bounds, { paddingTopLeft:[80,12], paddingBottomRight:[80,12], maxZoom:16 });
+}
+
+map.on('click', () => {
+  document.querySelectorAll('.marker-wrap').forEach(w=>w.classList.remove('open'));
+  document.querySelectorAll('.tip-num').forEach(el=>el.classList.remove('on'));
+});
+
+function selectSpot(n){
+  document.querySelectorAll('.marker-wrap').forEach(w=>w.classList.remove('open'));
+  document.querySelectorAll('.tip-num').forEach(el=>el.classList.remove('on'));
+  const wrap = document.querySelector(`.marker-wrap[data-mn="${n}"]`);
+  if(wrap){
+    wrap.classList.add('open');
+    const b = wrap.querySelector('.tip-num'); if(b) b.classList.add('on');
+  }
 }
 
 function render(){
   const list = current==="all" ? spots : spots.filter(s=>s.region===current);
-  drawMarkers(list);
-  const cards = document.getElementById('cards');
-  cards.innerHTML = "";
-  list.forEach(s => {
-    const nq = encodeURIComponent(s.name);
-    const card = document.createElement('div');
-    card.className = "card"; card.id = "card-"+s.n;
-    card.innerHTML = `
-      <div class="card-head">
-        <div class="card-num">${s.n}</div>
-        <div class="card-name">${s.name}</div>
-      </div>
-      <div class="card-desc">${s.desc}</div>
-      <div class="card-btns">
-        <a class="btn" href="https://map.naver.com/p/search/${nq}" target="_blank" rel="noopener">네이버 지도</a>
-      </div>`;
-    card.addEventListener('click', e => { if(e.target.tagName!=="A") selectCard(s.n); });
-    cards.appendChild(card);
-  });
-}
-
-function selectCard(n){
-  document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));
-  const card = document.getElementById('card-'+n);
-  if(card){ card.classList.add('on'); document.getElementById('cards').prepend(card); document.getElementById('cards').scrollTop = 0; }
-  Object.values(markers).forEach(m=>{ if(m._icon){ const b=m._icon.querySelector('.tip-num'); if(b) b.style.background="#1f3a5f"; }});
-  if(markers[n] && markers[n]._icon){ const b=markers[n]._icon.querySelector('.tip-num'); if(b) b.style.background="#c0392b"; }
+  buildMarkers(list);
 }
 
 function buildFilters(){
@@ -225,7 +228,6 @@ function buildFilters(){
       document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));
       b.classList.add('on');
       render();
-      document.getElementById('cards').scrollTop = 0;
     });
     box.appendChild(b);
   });
